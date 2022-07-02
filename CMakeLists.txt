@@ -3,4 +3,4 @@ project(RefraEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(RefraEngine main.cpp)
+add_executable(RefraEngine Source/RefraEngine.cpp)
