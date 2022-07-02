@@ -3,4 +3,16 @@ project(RefraEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(RefraEngine Source/RefraEngine.cpp)
+include_directories(ExternalDependencies/include)
+
+add_executable(RefraEngine
+        Source/RefraEngine.cpp
+        Source/glad.c)
+
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(ExternalDependencies/glfw)
+
+target_link_libraries(RefraEngine glfw)
