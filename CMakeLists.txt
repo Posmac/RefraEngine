@@ -14,5 +14,7 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(ExternalDependencies/glfw)
+add_subdirectory(ExternalDependencies/glm)
 
 target_link_libraries(RefraEngine glfw)
+target_link_libraries(RefraEngine glm)

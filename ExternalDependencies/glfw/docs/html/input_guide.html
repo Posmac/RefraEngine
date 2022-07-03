@@ -138,10 +138,10 @@ Keyboard input</h1>
 <h2><a class="anchor" id="input_key"></a>
 Key input</h2>
 <p >If you wish to be notified when a physical key is pressed or released or when it repeats, set a key callback.</p>
-<div class="fragment"><div class="line"><a class="code hl_function" href="group__input.html#ga1caf18159767e761185e49a3be019f8d">glfwSetKeyCallback</a>(window, key_callback);</div>
+<div class="fragment"><div class="line"><a class="code hl_function" href="group__input.html#ga1caf18159767e761185e49a3be019f8d">glfwSetKeyCallback</a>(window, processInput);</div>
 <div class="ttc" id="agroup__input_html_ga1caf18159767e761185e49a3be019f8d"><div class="ttname"><a href="group__input.html#ga1caf18159767e761185e49a3be019f8d">glfwSetKeyCallback</a></div><div class="ttdeci">GLFWkeyfun glfwSetKeyCallback(GLFWwindow *window, GLFWkeyfun callback)</div><div class="ttdoc">Sets the key callback.</div></div>
 </div><!-- fragment --><p >The callback function receives the <a class="el" href="group__keys.html">keyboard key</a>, platform-specific scancode, key action and <a class="el" href="group__mods.html">modifier bits</a>.</p>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> key_callback(<a class="code hl_typedef" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> key, <span class="keywordtype">int</span> scancode, <span class="keywordtype">int</span> action, <span class="keywordtype">int</span> mods)</div>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> processInput(<a class="code hl_typedef" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> key, <span class="keywordtype">int</span> scancode, <span class="keywordtype">int</span> action, <span class="keywordtype">int</span> mods)</div>
 <div class="line">{</div>
 <div class="line">    <span class="keywordflow">if</span> (key == <a class="code hl_define" href="group__keys.html#gabf48fcc3afbe69349df432b470c96ef2">GLFW_KEY_E</a> &amp;&amp; action == <a class="code hl_define" href="group__input.html#ga2485743d0b59df3791c45951c4195265">GLFW_PRESS</a>)</div>
 <div class="line">        activate_airship();</div>
