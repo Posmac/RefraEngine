@@ -1,0 +1,10 @@
+#ifndef REFRAENGINE_TEXTURE_H
+#define REFRAENGINE_TEXTURE_H
+
+
+class Texture {
+
+};
+
+
+#endif //REFRAENGINE_TEXTURE_H
