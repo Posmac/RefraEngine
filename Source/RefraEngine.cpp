@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "Renderer.h"
+#include "Render.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Window.h"
 
 #include "cube.h"
 
@@ -13,39 +14,23 @@ void processInput(GLFWwindow* window, int key, int scancode, int action, int mod
 
 int main()
 {
-    if (!glfwInit())
-    {
-        std::cout << "Initialization failed " << '\n';
-        glfwTerminate();
-        return -1;
-    }
+    rfe::Render render;
+    if(!render.InitGLWF())   return -1;
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                          "Refra Engine", NULL, NULL);
+    rfe::Window window (SCREEN_WIDTH, SCREEN_HEIGHT, "RefraEngine");
+    window.SetWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    window.SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    window.SetContextCurrent();
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    if(!window.CreationSuccess) return -1;
+    if(!render.LoadGlad())   return -1;
 
-    if (!window)
-    {
-        std::cout << "Window creation failed" << '\n';
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, processInput);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
+    //render class
     //window class
+    //input class
+
     //mesh class
     //model class
-    //render class
     //error handling class
 
     rfe::Shader cubeShader("../Assets/Shaders/cubeShaderV.vertex",
@@ -85,7 +70,7 @@ int main()
                                             0.1f, 100.0f);
     glEnable(GL_DEPTH_TEST);
 
-    while (!glfwWindowShouldClose(window))
+    while (!window.ShouldClose())
     {
         glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -105,19 +90,11 @@ int main()
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glfwSwapBuffers(window);
+        window.SwapBuffers();
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(window);
+    window.Destroy();
 
     return 0;
-}
-
-void processInput(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
 }
