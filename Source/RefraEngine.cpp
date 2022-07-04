@@ -3,12 +3,8 @@
 #include <sstream>
 #include <string>
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "Renderer.h"
+#include "Shader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -50,70 +46,15 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    //vertex data class
+
+    //window class
+    //mesh class
     //model class
     //render class
     //error handling class
 
-    //shader class
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-    std::ifstream input ("../Assets/Shaders/cubeShaderV.vertex");
-    std::string vertexShaderSource;
-    if(input.is_open())
-    {
-        std::stringstream sstr;
-        sstr << input.rdbuf();
-        vertexShaderSource = sstr.str();
-    }
-    const char* vss = vertexShaderSource.data();
-    glShaderSource(vertexShader, 1, &vss, NULL);
-    glCompileShader(vertexShader);
-
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED \n" << infoLog << std::endl;
-    }
-
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-    std::ifstream ifstream ("../Assets/Shaders/cubeShaderF.fragment");
-    std::string fragmentShaderSource;
-    if(ifstream.is_open())
-    {
-        std:std::stringstream sstr;
-        sstr << ifstream.rdbuf();
-        fragmentShaderSource = sstr.str();
-    }
-    const char* fss = fragmentShaderSource.data();
-    glShaderSource(fragmentShader, 1, &fss, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED \n" << infoLog << std::endl;
-    }
-
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success)
-    {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::COMPILATION_FAILED \n" << infoLog << std::endl;
-    }
+    rfe::Shader cubeShader("../Assets/Shaders/cubeShaderV.vertex",
+                           "../Assets/Shaders/cubeShaderF.fragment");
 
     //vertex data
     unsigned int VAO, VBO;
@@ -161,9 +102,8 @@ int main()
     stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    glUseProgram(shaderProgram);
-    glUniform1i(glGetUniformLocation(shaderProgram, "text"), 0);
-    glUseProgram(0);
+    cubeShader.Bind();
+    cubeShader.SetIntUniform("text", 0);
 
     glm::mat4 model = glm::mat4(1.0);
     glm::vec3 cameraPos = glm::vec3(2, 2, 5);
@@ -182,14 +122,15 @@ int main()
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glUseProgram(shaderProgram);
+
+        cubeShader.Bind();
 
         model = glm::mat4(1.0);
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        cubeShader.SetMatrix4fUniform("model", model);
+        cubeShader.SetMatrix4fUniform("view", view);
+        cubeShader.SetMatrix4fUniform("projection", projection);
 
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
