@@ -1,5 +1,7 @@
-#ifndef REFRAENGINE_RENDERER_H
-#define REFRAENGINE_RENDERER_H
+#ifndef REFRAENGINE_RENDER_H
+#define REFRAENGINE_RENDER_H
+
+#include <iostream>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -10,10 +12,12 @@
 
 namespace rfe
 {
-    class Renderer
+    class Render
     {
-
+    public:
+        bool InitGLWF();
+        bool LoadGlad();
     };
 }
 
-#endif //REFRAENGINE_RENDERER_H
+#endif //REFRAENGINE_RENDER_H

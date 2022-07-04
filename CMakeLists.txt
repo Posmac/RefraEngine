@@ -12,7 +12,7 @@ add_executable(RefraEngine
         Source/Window.cpp
         Source/Shader.cpp
         Source/Texture.cpp
-        Source/Renderer.cpp
+        Source/Render.cpp
         Source/stb_image.cpp
 
         Headers/cube.h
@@ -20,7 +20,7 @@ add_executable(RefraEngine
         Headers/Window.h
         Headers/Texture.h
         Headers/Shader.h
-        Headers/Renderer.h)
+        Headers/Render.h)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
