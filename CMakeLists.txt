@@ -13,6 +13,7 @@ add_executable(RefraEngine
         Source/Shader.cpp
         Source/Texture.cpp
         Source/Renderer.cpp
+        Source/stb_image.cpp
 
         Headers/cube.h
         Headers/stb_image.h
