@@ -26,6 +26,7 @@ namespace rfe
         bool ShouldClose();
         void SwapBuffers();
         void Destroy();
+        GLFWwindow *GetWindow();
     };
 }
 

@@ -48,3 +48,8 @@ void rfe::Window::Destroy()
 {
     glfwDestroyWindow(window);
 }
+
+GLFWwindow* rfe::Window::GetWindow()
+{
+    return window;
+}

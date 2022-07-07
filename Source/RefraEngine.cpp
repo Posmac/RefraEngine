@@ -1,33 +1,30 @@
-#include <iostream>
-
 #include "Render.h"
+#include "Window.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "Window.h"
+#include "Camera.h"
+#include "Input.h"
 
 #include "cube.h"
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-
-void processInput(GLFWwindow* window, int key, int scancode, int action, int mods);
-
-int main()
-{
+int main() {
     rfe::Render render;
-    if(!render.InitGLWF())   return -1;
+    if (!render.InitGLWF()) return -1;
 
-    rfe::Window window (SCREEN_WIDTH, SCREEN_HEIGHT, "RefraEngine");
+    rfe::Window window(1280, 720, "RefraEngine");
     window.SetWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     window.SetWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     window.SetContextCurrent();
 
-    if(!window.CreationSuccess) return -1;
-    if(!render.LoadGlad())   return -1;
+    if (!window.CreationSuccess) return -1;
+    if (!render.LoadGlad()) return -1;
 
-    //render class
-    //window class
-    //input class
+    rfe::Input input;
+    input.SetupCallback(window);
+
+
+    //camera class
+    //input class like adapter, linker, or singleton
 
     //mesh class
     //model class
@@ -36,7 +33,7 @@ int main()
     rfe::Shader cubeShader("../Assets/Shaders/cubeShaderV.vertex",
                            "../Assets/Shaders/cubeShaderF.fragment");
 
-    //vertex data
+    //vertex data to model or render class
     unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -47,10 +44,10 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*) (3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -61,18 +58,36 @@ int main()
     cubeShader.Bind();
     cubeShader.SetIntUniform("text", 0);
 
-    glm::mat4 model = glm::mat4(1.0);
+    glm::vec3 lookAtTarget = glm::vec3(3.0, 1.0, -1.0);
+    glm::vec3 zeroLookAt = glm::vec3(0.0);
+
     glm::vec3 cameraPos = glm::vec3(2, 2, 5);
     glm::vec3 cameraForward = glm::vec3(0, 0, -1);
     glm::vec3 cameraUp = glm::vec3(0, 1, 0);
-    glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraForward, cameraUp);
-    glm::mat4 projection = glm::perspective(glm::radians(60.0f), (float)SCREEN_WIDTH/SCREEN_HEIGHT,
+    rfe::Camera camera(cameraPos, cameraForward, cameraUp);
+
+    //glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraForward, cameraUp);
+    glm::mat4 view = camera.StaticViewMatrix(lookAtTarget);
+
+    glm::mat4 projection = glm::perspective(glm::radians(60.0f),
+                                            (float) window.ScreenWidth / (float) window.ScreenHeight,
                                             0.1f, 100.0f);
+    glm::mat4 model = glm::mat4(1.0);
+
     glEnable(GL_DEPTH_TEST);
 
-    while (!window.ShouldClose())
-    {
-        glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    while (!window.ShouldClose()) {
+        if (input.GetKeyState(rfe::KEY_A) == rfe::Pressed) {
+            std::cout << "Pressed" << std::endl;
+        }
+        if (input.GetKeyState(rfe::KEY_A) == rfe::Released) {
+            std::cout << "Released" << std::endl;
+        }
+        if (input.GetKeyState(rfe::KEY_A) == rfe::Hold) {
+            std::cout << "Hold" << std::endl;
+        }
+
+        glViewport(0, 0, window.ScreenWidth, window.ScreenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0, 1, 1, 1);
 
@@ -81,8 +96,21 @@ int main()
         cubeShader.Bind();
 
         model = glm::mat4(1.0);
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        model = glm::rotate(model, (float) glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
+        cubeShader.SetMatrix4fUniform("model", model);
+        cubeShader.SetMatrix4fUniform("view", view);
+        cubeShader.SetMatrix4fUniform("projection", projection);
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        lookAtTarget.y += (float) sin(glfwGetTime()) * 0.01f;
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lookAtTarget);
+
+        view = camera.StaticViewMatrix(lookAtTarget);
         cubeShader.SetMatrix4fUniform("model", model);
         cubeShader.SetMatrix4fUniform("view", view);
         cubeShader.SetMatrix4fUniform("projection", projection);

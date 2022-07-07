@@ -14,13 +14,18 @@ add_executable(RefraEngine
         Source/Texture.cpp
         Source/Render.cpp
         Source/stb_image.cpp
+        Source/Camera.cpp
+        Source/Input.cpp
 
         Headers/cube.h
         Headers/stb_image.h
         Headers/Window.h
         Headers/Texture.h
         Headers/Shader.h
-        Headers/Render.h)
+        Headers/Render.h
+        Headers/Camera.h
+        Headers/Input.h
+        Headers/KeyCode.h)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
