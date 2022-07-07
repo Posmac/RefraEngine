@@ -86,7 +86,7 @@ int main() {
         glClearColor(0, 1, 1, 1);
 
         camera.ProcessInput(input, deltaTime);
-        glm::mat4 view = camera.DynamicViewMatrix();
+        glm::mat4 view = camera.StaticViewMatrix(lookAtTarget);
 
         cubeTexture.ActivateTexture(GL_TEXTURE0);
         cubeTexture.Bind();
