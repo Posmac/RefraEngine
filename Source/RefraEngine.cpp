@@ -8,6 +8,10 @@
 #include "cube.h"
 
 int main() {
+
+    double deltaTime = 0;
+    double lastTime = glfwGetTime();
+
     rfe::Render render;
     if (!render.InitGLWF()) return -1;
 
@@ -57,16 +61,13 @@ int main() {
     cubeShader.Bind();
     cubeShader.SetIntUniform("text", 0);
 
-    glm::vec3 lookAtTarget = glm::vec3(3.0, 1.0, -1.0);
-    glm::vec3 zeroLookAt = glm::vec3(0.0);
+    glm::vec3 lookAtTarget = glm::vec3(0,0,0);
+    glm::vec3 zeroLookAt(0.0);
 
-    glm::vec3 cameraPos = glm::vec3(2, 2, 5);
-    glm::vec3 cameraForward = glm::vec3(0, 0, -1);
-    glm::vec3 cameraUp = glm::vec3(0, 1, 0);
-    rfe::Camera camera(cameraPos, cameraForward, cameraUp);
-
-    //glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraForward, cameraUp);
-    glm::mat4 view = camera.StaticViewMatrix(lookAtTarget);
+    glm::vec3 cameraPos     = glm::vec3(0.0f, 0.0f,  3.0f);
+    glm::vec3 cameraForward = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 cameraUp      = glm::vec3(0.0f, 1.0f,  0.0f);
+    rfe::Camera camera(cameraPos, cameraForward, cameraUp, 3.0f);
 
     glm::mat4 projection = glm::perspective(glm::radians(60.0f),
                                             (float) window.ScreenWidth / (float) window.ScreenHeight,
@@ -76,38 +77,37 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     while (!window.ShouldClose()) {
+
+        deltaTime = glfwGetTime() - lastTime;
+        lastTime = glfwGetTime();
+
         glViewport(0, 0, window.ScreenWidth, window.ScreenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0, 1, 1, 1);
+
+        camera.ProcessInput(input, deltaTime);
+        glm::mat4 view = camera.DynamicViewMatrix();
 
         cubeTexture.ActivateTexture(GL_TEXTURE0);
         cubeTexture.Bind();
         cubeShader.Bind();
 
         model = glm::mat4(1.0);
-        model = glm::rotate(model, (float) glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
         cubeShader.SetMatrix4fUniform("model", model);
         cubeShader.SetMatrix4fUniform("view", view);
         cubeShader.SetMatrix4fUniform("projection", projection);
-
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        lookAtTarget.y += (float) sin(glfwGetTime()) * 0.01f;
-
         model = glm::mat4(1.0f);
-        model = glm::translate(model, lookAtTarget);
-
-        view = camera.StaticViewMatrix(lookAtTarget);
         cubeShader.SetMatrix4fUniform("model", model);
         cubeShader.SetMatrix4fUniform("view", view);
         cubeShader.SetMatrix4fUniform("projection", projection);
-
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         window.SwapBuffers();
+
         glfwPollEvents();
     }
 

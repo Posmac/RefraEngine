@@ -34,9 +34,9 @@ rfe::PressState rfe::Input::GetKeyState(rfe::KeyCode keyCode) {
             }
             keyData.pressState = rfe::Released;
             break;
-        case GLFW_REPEAT:
+      /*  case GLFW_REPEAT:
             keyData.pressState = rfe::Hold;
-            break;
+            break;*/
     }
     return keyData.pressState;
 }
