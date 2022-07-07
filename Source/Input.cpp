@@ -10,44 +10,6 @@ void rfe::Input::SetupCallback(rfe::Window &window) {
                        });
 }
 
-bool rfe::Input::KeyDown(rfe::KeyCode keyCode) {
-    auto code = static_cast<KeyCode>(keyData.keyCode);
-    if(keyCode != code){
-        return false;
-    }
-    if(keyData.action == GLFW_PRESS)
-    {
-        return true;
-    }
-    return false;
-}
-
-bool rfe::Input::KeyUp(rfe::KeyCode keyCode) {
-    auto code = static_cast<KeyCode>(keyData.keyCode);
-    if(keyCode != code){
-        return false;
-    }
-    if(keyData.action == GLFW_RELEASE)
-    {
-        keyData.keyCode = -1;
-        keyData.action = -1;
-        return true;
-    }
-    return false;
-}
-
-bool rfe::Input::Key(rfe::KeyCode keyCode) {
-    auto code = static_cast<KeyCode>(keyData.keyCode);
-    if(keyCode != code){
-        return false;
-    }
-    if(keyData.action == GLFW_REPEAT)
-    {
-        return true;
-    }
-    return false;
-}
-
 rfe::PressState rfe::Input::GetKeyState(rfe::KeyCode keyCode) {
     auto code = static_cast<KeyCode>(keyData.keyCode);
     if(keyCode != code){

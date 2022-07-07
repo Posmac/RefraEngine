@@ -25,7 +25,6 @@ namespace rfe {
     public:
         void SetupCallback(Window &window);
         PressState GetKeyState(KeyCode keyCode);
-    private:
     };
 }
 

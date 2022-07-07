@@ -19,13 +19,12 @@ int main() {
     if (!window.CreationSuccess) return -1;
     if (!render.LoadGlad()) return -1;
 
-    rfe::Input input;
+    rfe::Input input{};
     input.SetupCallback(window);
 
-
     //camera class
-    //input class like adapter, linker, or singleton
 
+    //event system
     //mesh class
     //model class
     //error handling class
@@ -77,16 +76,6 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     while (!window.ShouldClose()) {
-        if (input.GetKeyState(rfe::KEY_A) == rfe::Pressed) {
-            std::cout << "Pressed" << std::endl;
-        }
-        if (input.GetKeyState(rfe::KEY_A) == rfe::Released) {
-            std::cout << "Released" << std::endl;
-        }
-        if (input.GetKeyState(rfe::KEY_A) == rfe::Hold) {
-            std::cout << "Hold" << std::endl;
-        }
-
         glViewport(0, 0, window.ScreenWidth, window.ScreenHeight);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0, 1, 1, 1);
