@@ -1,16 +1,25 @@
 #include "Input.h"
 
 void rfe::Input::SetupCallback(rfe::Window &window) {
-    glfwSetWindowUserPointer(window.GetWindow(), &keysData);
+    glfwSetWindowUserPointer(window.GetWindow(), this);
     glfwSetKeyCallback(window.GetWindow(),
                        [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-                           std::map<KeyCode, KeyData> &mapData =
-                                   *static_cast<std::map<KeyCode, KeyData> *>(glfwGetWindowUserPointer(window));
+                           Input &input =
+                                   *static_cast<Input*>(glfwGetWindowUserPointer(window));
                            KeyData data{};
                            data.action = action;
                            data.keyCode = key;
-                           mapData[static_cast<KeyCode>(key)] = data;
+                           input.keysData[static_cast<KeyCode>(key)] = data;
                        });
+
+    glfwSetCursorPosCallback(window.GetWindow(),
+                             [](GLFWwindow* window, double xpos, double ypos)
+                             {
+                                 Input &input =
+                                         *static_cast<Input*>(glfwGetWindowUserPointer(window));
+                                input.mouseData.xPos = xpos;
+                                input.mouseData.yPos = ypos;
+                             });
 }
 
 rfe::PressState rfe::Input::GetKeyState(rfe::KeyCode keyCode) {
@@ -35,4 +44,8 @@ rfe::PressState rfe::Input::GetKeyState(rfe::KeyCode keyCode) {
     }
 
     return rfe::Unknown;
+}
+
+rfe::MouseData rfe::Input::GetMouseData() {
+    return mouseData;
 }

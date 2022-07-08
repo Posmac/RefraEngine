@@ -20,12 +20,19 @@ namespace rfe {
         int action;
     };
 
+    struct MouseData {
+        int xPos;
+        int yPos;
+    };
+
     class Input {
     private:
+        MouseData mouseData;
         std::map<KeyCode, KeyData> keysData;
     public:
         void SetupCallback(Window &window);
         PressState GetKeyState(KeyCode keyCode);
+        MouseData GetMouseData();
     };
 }
 

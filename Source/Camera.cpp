@@ -5,6 +5,9 @@ rfe::Camera::Camera(const glm::vec3& position, const glm::vec3& forward, const g
     : position(position), forward(forward), up(up),
     yaw(yaw), pitch(pitch), roll(roll), speed(speed)
 {
+    lastMouseData.xPos = 1280/2;
+    lastMouseData.yPos = 720/2;
+    firstMove = false;
 }
 
 void rfe::Camera::Translate(const glm::vec3 &newPosition)
@@ -12,62 +15,95 @@ void rfe::Camera::Translate(const glm::vec3 &newPosition)
     position += newPosition;
 }
 
-glm::mat4 rfe::Camera::DynamicViewMatrix()
+glm::mat4 rfe::Camera::ViewMatrix()
 {
-    glm::vec3 zaxis = glm::normalize(forward); //forward vector
-    glm::vec3 xaxis = glm::normalize(glm::cross(up, zaxis)); // right vector
-    glm::vec3 yaxis = glm::cross(zaxis, xaxis); // up vector
+    glm::vec3 z = glm::normalize(forward); //forward vector
+    glm::vec3 x = glm::normalize(glm::cross(z, up)); // right vector
+    glm::vec3 y = glm::cross(x, z); // up vector
 
-    glm::mat4 viewMatrix = {
-            glm::vec4(          xaxis.x,                        yaxis.x,                        zaxis.x,              0),
-            glm::vec4(          xaxis.y,                        yaxis.y,                        zaxis.y,              0),
-            glm::vec4(          xaxis.z,                        yaxis.z,                        zaxis.z,              0),
-            glm::vec4( -glm::dot(xaxis, position),-glm::dot(yaxis, position) ,-glm::dot(zaxis, position),1),
+    glm::mat4 lookAtRH = {
+            glm::vec4(x.x, y.x, -z.x, 0),
+            glm::vec4(x.y, y.y, -z.y, 0),
+            glm::vec4(x.z, y.z, -z.z, 0),
+            glm::vec4(-glm::dot(x, position), -glm::dot(y, position) , glm::dot(z, position), 1),
     };
 
-    return viewMatrix;
+    return lookAtRH;
 }
 
-glm::mat4 rfe::Camera::StaticViewMatrix(const glm::vec3 targetPosition)
+glm::mat4 rfe::Camera::ProjectionMatrix(ProjectionType projectionType)
 {
-    glm::vec3 zaxis = glm::normalize(position - targetPosition); //forward vector
-    glm::vec3 xaxis = glm::normalize(glm::cross(up, zaxis)); // right vector
-    glm::vec3 yaxis = glm::cross(zaxis, xaxis); // up vector
+    glm::mat4 projectionMatrix;
+    if(projectionType == rfe::Perspective)
+    {
 
-    glm::mat4 viewMatrix = {
-            glm::vec4(          xaxis.x,                        yaxis.x,                        zaxis.x,              0),
-            glm::vec4(          xaxis.y,                        yaxis.y,                        zaxis.y,              0),
-            glm::vec4(          xaxis.z,                        yaxis.z,                        zaxis.z,              0),
-            glm::vec4( -glm::dot(xaxis, position),-glm::dot(yaxis, position) ,-glm::dot(zaxis, position),1),
-            };
+    }
+    else
+    {
 
-    return viewMatrix;
-}
+    }
 
-glm::mat4 rfe::Camera::ProjectionMatrix()
-{
-    return glm::mat4();
+    return projectionMatrix;
 }
 
 void rfe::Camera::ProcessInput(rfe::Input& input, float deltaTime) {
     if(input.GetKeyState(rfe::KEY_W) == rfe::Pressed)
     {
-        Translate(-forward * deltaTime * speed);
+        Translate(forward * deltaTime * speed);
     }
     if(input.GetKeyState(rfe::KEY_S) == rfe::Pressed)
     {
-        Translate(forward * deltaTime * speed);
+        Translate(-forward * deltaTime * speed);
     }
     if(input.GetKeyState(rfe::KEY_A) == rfe::Pressed)
     {
-        Translate(-glm::normalize(glm::cross(up, forward)) * deltaTime * speed);
+        Translate(glm::normalize(glm::cross(up, forward)) * deltaTime * speed);
     }
     if(input.GetKeyState(rfe::KEY_D) == rfe::Pressed)
     {
-        Translate(glm::normalize(glm::cross(up, forward)) * deltaTime * speed);
+        Translate(-glm::normalize(glm::cross(up, forward)) * deltaTime * speed);
     }
     if(input.GetKeyState(rfe::KEY_R) == rfe::Released)
     {
         position = glm::vec3(0, 0, 5);
     }
+}
+
+void rfe::Camera::ProcessMouseInput(rfe::MouseData mouseData, float deltaTime, float sensitivity) {
+    if(!firstMove)
+    {
+        mouseData.xPos = lastMouseData.xPos;
+        mouseData.yPos = lastMouseData.yPos;
+        firstMove = true;
+    }
+    float xoffset = mouseData.xPos - lastMouseData.xPos;
+    float yoffset = lastMouseData.yPos - mouseData.yPos;
+    lastMouseData.xPos = mouseData.xPos;
+    lastMouseData.yPos = mouseData.yPos;
+
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+    right = glm::normalize(glm::cross(up, direction));
+    up = glm::normalize(glm::cross(right, direction));
+    std::cout << direction.x  << "  "  << direction.y << "  " << direction.z << std::endl;
+
+    forward = glm::normalize(direction);
+}
+
+void rfe::Camera::SetCursorFPS(rfe::Window& window) {
+    glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }

@@ -6,26 +6,36 @@
 
 namespace rfe
 {
+    enum ProjectionType
+    {
+        Perspective,
+        Orthogonal,
+    };
+
     class Camera
     {
     private:
         glm::vec3 position;
         glm::vec3 forward;
+        glm::vec3 right;
         glm::vec3 up;
 
         float speed;
 
+        MouseData lastMouseData;
+        bool firstMove;
         float yaw;
         float pitch;
         float roll;
     public:
         Camera(const glm::vec3& position, const glm::vec3& forward, const glm::vec3& up, float speed,
-               float yaw = 0, float pitch = 0, float roll = 0);
+               float yaw = -90, float pitch = 0, float roll = 0);
         void Translate(const glm::vec3& newPosition);
-        glm::mat4 StaticViewMatrix(const glm::vec3 targetPosition);
-        glm::mat4 DynamicViewMatrix();
-        glm::mat4 ProjectionMatrix();
+        glm::mat4 ViewMatrix();
+        glm::mat4 ProjectionMatrix(ProjectionType projectionType);
         void ProcessInput(Input& input, float deltaTime);
+        void ProcessMouseInput(MouseData mouseData, float deltaTime, float sensivity);
+        void SetCursorFPS(rfe::Window& window);
     };
 }
 

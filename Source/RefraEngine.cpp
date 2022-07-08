@@ -68,6 +68,7 @@ int main() {
     glm::vec3 cameraForward = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 cameraUp      = glm::vec3(0.0f, 1.0f,  0.0f);
     rfe::Camera camera(cameraPos, cameraForward, cameraUp, 3.0f);
+    camera.SetCursorFPS(window);
 
     glm::mat4 projection = glm::perspective(glm::radians(60.0f),
                                             (float) window.ScreenWidth / (float) window.ScreenHeight,
@@ -78,6 +79,10 @@ int main() {
 
     while (!window.ShouldClose()) {
 
+        if(input.GetKeyState(rfe::KeyCode::KEY_ESCAPE) == rfe::Pressed)
+        {
+            window.SetWindowClose();
+        }
         deltaTime = glfwGetTime() - lastTime;
         lastTime = glfwGetTime();
 
@@ -86,7 +91,8 @@ int main() {
         glClearColor(0, 1, 1, 1);
 
         camera.ProcessInput(input, deltaTime);
-        glm::mat4 view = camera.StaticViewMatrix(lookAtTarget);
+        camera.ProcessMouseInput(input.GetMouseData(), deltaTime, 0.05f);
+        glm::mat4 view = camera.ViewMatrix();
 
         cubeTexture.ActivateTexture(GL_TEXTURE0);
         cubeTexture.Bind();
