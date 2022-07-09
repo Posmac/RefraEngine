@@ -29,19 +29,27 @@ glm::mat4 rfe::Camera::ViewMatrix()
     return lookAtRH;
 }
 
-glm::mat4 rfe::Camera::ProjectionMatrix(ProjectionType projectionType)
-{
-    glm::mat4 projectionMatrix;
-    if(projectionType == rfe::Perspective)
-    {
+glm::mat4 rfe::Camera::PerspectiveMatrix(float angleInDeg, float aspect, float near, float far) {
+    float t = near * tan(glm::radians(angleInDeg/2));
+    float r = t * aspect;
+    float ze = (far + near) / (near - far);
+    float zd = 2*near*far/(near - far);
+    glm::mat4 result = glm::mat4(1.0);
+    result[0][0] = near / r;
+    result[1][1] = near / t;
+    result[2][2] = ze;
+    result[3][2] = zd;
+    result[2][3] = -1;
+    return result;
+}
 
-    }
-    else
-    {
-
-    }
-
-    return projectionMatrix;
+glm::mat4 rfe::Camera::OrthogonalMatrix(float sizeX, float sizeY, float near, float far) {
+    glm::mat4 result(1.0);
+    result[0][0] = 1/(sizeX/2);
+    result[1][1] = 1/(sizeY/2);
+    result[2][2] = -2/(far-near);
+    result[3][2] = (far - near)/(near - far);
+    return result;
 }
 
 void rfe::Camera::ProcessInput(rfe::Input& input, float deltaTime) {

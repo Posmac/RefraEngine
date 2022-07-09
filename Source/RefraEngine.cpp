@@ -69,8 +69,7 @@ int main() {
     rfe::Camera camera(cameraPos, cameraForward, cameraUp, 3.0f);
     camera.SetCursorFPS(window);
 
-    glm::mat4 projection = glm::perspective(glm::radians(60.0f),
-                                            (float) window.ScreenWidth / (float) window.ScreenHeight,
+    glm::mat4 projection = camera.PerspectiveMatrix(60.0f,(float) window.ScreenWidth / (float) window.ScreenHeight,
                                             0.1f, 100.0f);
     glm::mat4 model = glm::mat4(1.0);
 
@@ -90,7 +89,7 @@ int main() {
         glClearColor(0, 1, 1, 1);
 
         camera.ProcessInput(input, deltaTime);
-        camera.ProcessMouseInput(input.GetMouseData(), deltaTime, 0.05f);
+        camera.ProcessMouseInput(input.GetMouseData(), deltaTime, 0.1f);
         glm::mat4 view = camera.ViewMatrix();
 
         cubeTexture.ActivateTexture(GL_TEXTURE0);
@@ -98,13 +97,6 @@ int main() {
         cubeShader.Bind();
 
         model = glm::mat4(1.0);
-        cubeShader.SetMatrix4fUniform("model", model);
-        cubeShader.SetMatrix4fUniform("view", view);
-        cubeShader.SetMatrix4fUniform("projection", projection);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        model = glm::mat4(1.0f);
         cubeShader.SetMatrix4fUniform("model", model);
         cubeShader.SetMatrix4fUniform("view", view);
         cubeShader.SetMatrix4fUniform("projection", projection);
