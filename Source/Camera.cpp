@@ -2,11 +2,9 @@
 
 rfe::Camera::Camera(const glm::vec3& position, const glm::vec3& forward, const glm::vec3& up, float speed,
                     float yaw, float pitch, float roll)
-    : position(position), forward(forward), up(up),
+    : position(position), forward(forward), worldUp(up),
     yaw(yaw), pitch(pitch), roll(roll), speed(speed)
 {
-    lastMouseData.xPos = 1280/2;
-    lastMouseData.yPos = 720/2;
     firstMove = false;
 }
 
@@ -57,25 +55,22 @@ void rfe::Camera::ProcessInput(rfe::Input& input, float deltaTime) {
     }
     if(input.GetKeyState(rfe::KEY_A) == rfe::Pressed)
     {
-        Translate(glm::normalize(glm::cross(up, forward)) * deltaTime * speed);
+        Translate(-right * deltaTime * speed);
     }
     if(input.GetKeyState(rfe::KEY_D) == rfe::Pressed)
     {
-        Translate(-glm::normalize(glm::cross(up, forward)) * deltaTime * speed);
-    }
-    if(input.GetKeyState(rfe::KEY_R) == rfe::Released)
-    {
-        position = glm::vec3(0, 0, 5);
+        Translate(right * deltaTime * speed);
     }
 }
 
 void rfe::Camera::ProcessMouseInput(rfe::MouseData mouseData, float deltaTime, float sensitivity) {
-    if(!firstMove)
-    {
-        mouseData.xPos = lastMouseData.xPos;
-        mouseData.yPos = lastMouseData.yPos;
+
+    if (!firstMove) {
+        lastMouseData.xPos = mouseData.xPos;
+        lastMouseData.yPos = mouseData.yPos;
         firstMove = true;
     }
+
     float xoffset = mouseData.xPos - lastMouseData.xPos;
     float yoffset = lastMouseData.yPos - mouseData.yPos;
     lastMouseData.xPos = mouseData.xPos;
@@ -92,18 +87,17 @@ void rfe::Camera::ProcessMouseInput(rfe::MouseData mouseData, float deltaTime, f
     if(pitch < -89.0f)
         pitch = -89.0f;
 
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
-    right = glm::normalize(glm::cross(up, direction));
-    up = glm::normalize(glm::cross(right, direction));
-    std::cout << direction.x  << "  "  << direction.y << "  " << direction.z << std::endl;
-
-    forward = glm::normalize(direction);
+    RecalculateBasisVectors();
 }
 
 void rfe::Camera::SetCursorFPS(rfe::Window& window) {
     glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void rfe::Camera::RecalculateBasisVectors() {
+    forward.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    forward.y = sin(glm::radians(pitch));
+    forward.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    right = glm::normalize(glm::cross(forward, worldUp));
+    up = glm::normalize(glm::cross(right, forward));
 }

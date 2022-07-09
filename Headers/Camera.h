@@ -19,6 +19,7 @@ namespace rfe
         glm::vec3 forward;
         glm::vec3 right;
         glm::vec3 up;
+        glm::vec3 worldUp;
 
         float speed;
 
@@ -36,6 +37,7 @@ namespace rfe
         void ProcessInput(Input& input, float deltaTime);
         void ProcessMouseInput(MouseData mouseData, float deltaTime, float sensivity);
         void SetCursorFPS(rfe::Window& window);
+        void RecalculateBasisVectors();
     };
 }
 
