@@ -62,4 +62,5 @@ int rfe::MeshLoader::LoadMesh(std::string path, Mesh &mesh) {
             }
         }
     }
+    return 1;
 }
