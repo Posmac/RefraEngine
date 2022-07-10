@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Input.h"
+#include "MeshLoader.h"
 
 #include "cube.h"
 
@@ -26,12 +27,19 @@ int main() {
     rfe::Input input{};
     input.SetupCallback(window);
 
-    //camera class
-
-    //event system
-    //mesh class
+    //mesh class loader (obj files)
     //model class
+    //scene class
+    //resource manager class
+    //material class
+    //application class
     //error handling class
+    //event system
+    //logger
+
+    rfe::MeshLoader loader;
+    rfe::Mesh box;
+    loader.LoadMesh("../Assets/Models/simpleBox.obj", box);
 
     rfe::Shader cubeShader("../Assets/Shaders/cubeShaderV.vertex",
                            "../Assets/Shaders/cubeShaderF.fragment");

@@ -16,6 +16,8 @@ add_executable(RefraEngine
         Source/stb_image.cpp
         Source/Camera.cpp
         Source/Input.cpp
+        Source/MeshLoader.cpp
+        Source/Mesh.cpp
 
         Headers/cube.h
         Headers/stb_image.h
@@ -25,7 +27,9 @@ add_executable(RefraEngine
         Headers/Render.h
         Headers/Camera.h
         Headers/Input.h
-        Headers/KeyCode.h)
+        Headers/KeyCode.h
+        Headers/MeshLoader.h
+        Headers/Mesh.h)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
