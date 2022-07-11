@@ -1,3 +1,16 @@
+//TODO
+    //mesh class loader (obj files)
+    //model class
+    //scene class
+    //resource manager class
+    //material class
+    //application class
+    //error handling class
+    //event system
+    //logger
+//DONE
+    //Camera class
+
 #include "Render.h"
 #include "Window.h"
 #include "Shader.h"
@@ -5,6 +18,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "MeshLoader.h"
+#include "Model.h"
 
 #include "cube.h"
 
@@ -27,41 +41,14 @@ int main() {
     rfe::Input input{};
     input.SetupCallback(window);
 
-    //mesh class loader (obj files)
-    //model class
-    //scene class
-    //resource manager class
-    //material class
-    //application class
-    //error handling class
-    //event system
-    //logger
-
     rfe::MeshLoader loader;
     rfe::Mesh box;
     loader.LoadMesh("../Assets/Models/simpleBox.obj", box);
+    box.CreateMeshVAO();
+    rfe::Model cubeModel(box);
 
     rfe::Shader cubeShader("../Assets/Shaders/cubeShaderV.vertex",
                            "../Assets/Shaders/cubeShaderF.fragment");
-
-    //vertex data to model or render class
-    unsigned int VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     //texture class
     rfe::Texture cubeTexture("../Assets/Textures/minecraftCubeTex.jpg");
@@ -108,8 +95,7 @@ int main() {
         cubeShader.SetMatrix4fUniform("model", model);
         cubeShader.SetMatrix4fUniform("view", view);
         cubeShader.SetMatrix4fUniform("projection", projection);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        cubeModel.DrawModel(cubeShader);
 
         window.SwapBuffers();
 

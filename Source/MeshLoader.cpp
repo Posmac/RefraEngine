@@ -10,7 +10,8 @@ int rfe::MeshLoader::LoadMesh(std::string path, Mesh &mesh) {
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> textureCoords;
-    std::map<std::string ,rfe::VertexDataPTN> vertexDataMap;
+    std::map<std::string, rfe::VertexDataPTN> vertexDataMap;
+    std::map<std::string, unsigned int> vertexDataIndexMap;
 
     int index = 0;
     std::string fileLine;
@@ -53,11 +54,12 @@ int rfe::MeshLoader::LoadMesh(std::string path, Mesh &mesh) {
 
                 if (vertexDataMap.count(faceTriplet) == 0) {
                     vertexDataMap[faceTriplet] = vertexDataPtn;
+                    vertexDataIndexMap[faceTriplet] = index;
                     mesh.AddVertexData(vertexDataPtn);
                     mesh.AddIndex(index);
                     index++;
                 } else {
-                    mesh.AddIndex(index);
+                    mesh.AddIndex(vertexDataIndexMap[faceTriplet]);
                 }
             }
         }

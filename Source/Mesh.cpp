@@ -8,30 +8,32 @@ rfe::VertexDataPTN::VertexDataPTN(const glm::vec3& pos, const glm::vec3& norm,
 }
 
 rfe::VertexDataPTN::VertexDataPTN() {
-
+    position = glm::vec3(0.0);
+    normal = glm::vec3(0.0);
+    textureCoord = glm::vec3(0.0);
 }
 
 rfe::Mesh::Mesh() {
+    VAO = 0;
+    VBO = 0;
+    EBO = 0;
+}
 
-    //generate buffers
+void rfe::Mesh::CreateMeshVAO()
+{
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
-    //Bind buffers
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-    //Copy data to buffer
-    //First Vertex data
     glBufferData(GL_ARRAY_BUFFER, meshVertexData.size() * sizeof(VertexDataPTN), &meshVertexData[0], GL_STATIC_DRAW);
-    //Second index data
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-    //setup data reading
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexDataPTN), (void*) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexDataPTN), (void*)0);
 
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexDataPTN), (void*)(offsetof(VertexDataPTN, normal)));
@@ -46,6 +48,18 @@ void rfe::Mesh::AddVertexData(const VertexDataPTN& vertexDataPtn) {
     meshVertexData.push_back(vertexDataPtn);
 }
 
-void rfe::Mesh::AddIndex(int index) {
+void rfe::Mesh::AddIndex(unsigned int index) {
     indices.push_back(index);
+}
+
+void rfe::Mesh::Bind() const {
+    glBindVertexArray(VAO);
+}
+
+void rfe::Mesh::Unbind() const {
+    glBindVertexArray(0);
+}
+
+int rfe::Mesh::GetVertexCount() const {
+    return indices.size();
 }

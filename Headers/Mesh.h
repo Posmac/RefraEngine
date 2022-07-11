@@ -27,8 +27,12 @@ namespace rfe {
         std::vector<unsigned int> indices;
     public:
         Mesh();
+        void CreateMeshVAO();
         void AddVertexData(const VertexDataPTN& vertexDataPtn);
-        void AddIndex(int index);
+        void AddIndex(unsigned int index);
+        void Bind() const;
+        void Unbind()const;
+        int GetVertexCount() const;
     };
 }
 
