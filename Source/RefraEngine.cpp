@@ -1,9 +1,9 @@
 //TODO
     //mesh class loader (obj files)
     //model class
+    //material class
     //scene class
     //resource manager class
-    //material class
     //application class
     //error handling class
     //event system
@@ -41,33 +41,26 @@ int main() {
     rfe::Input input{};
     input.SetupCallback(window);
 
+    rfe::Shader boxShader("../Assets/Shaders/cubeShaderV.vertex",
+                          "../Assets/Shaders/cubeShaderF.fragment");
+    boxShader.Bind();
+    boxShader.SetIntUniform("text", 0);
+
+    rfe::Texture cubeTexture("../Assets/Textures/minecraftCubeTex.jpg");
+
     rfe::MeshLoader loader;
     rfe::Mesh box;
     loader.LoadMesh("../Assets/Models/simpleBox.obj", box);
     box.CreateMeshVAO();
-    rfe::Model cubeModel(box);
-
-    rfe::Shader cubeShader("../Assets/Shaders/cubeShaderV.vertex",
-                           "../Assets/Shaders/cubeShaderF.fragment");
+    rfe::Model cubeModel(box, boxShader);
 
     //texture class
-    rfe::Texture cubeTexture("../Assets/Textures/minecraftCubeTex.jpg");
 
-    cubeShader.Bind();
-    cubeShader.SetIntUniform("text", 0);
-
-    glm::vec3 lookAtTarget = glm::vec3(0,0,0);
-
-    glm::vec3 cameraPos     = glm::vec3(0.0f, 0.0f,  3.0f);
-    glm::vec3 cameraForward = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 cameraUp      = glm::vec3(0.0f, 1.0f,  0.0f);
-    rfe::Camera camera(cameraPos, cameraForward, cameraUp, 3.0f);
+    rfe::Camera camera(glm::vec3(0.0f, 0.0f,  3.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f,  0.0f), 3.0f);
     camera.SetCursorFPS(window);
 
     glm::mat4 projection = camera.PerspectiveMatrix(60.0f,(float) window.ScreenWidth / (float) window.ScreenHeight,
                                             0.1f, 100.0f);
-    glm::mat4 model = glm::mat4(1.0);
-
     glEnable(GL_DEPTH_TEST);
 
     while (!window.ShouldClose()) {
@@ -89,13 +82,12 @@ int main() {
 
         cubeTexture.ActivateTexture(GL_TEXTURE0);
         cubeTexture.Bind();
-        cubeShader.Bind();
+        boxShader.Bind();
 
-        model = glm::mat4(1.0);
-        cubeShader.SetMatrix4fUniform("model", model);
-        cubeShader.SetMatrix4fUniform("view", view);
-        cubeShader.SetMatrix4fUniform("projection", projection);
-        cubeModel.DrawModel(cubeShader);
+        boxShader.SetMatrix4fUniform("view", view);
+        boxShader.SetMatrix4fUniform("projection", projection);
+        cubeModel.SetupShaderModelMatrix();
+        cubeModel.DrawModel(boxShader);
 
         window.SwapBuffers();
 
