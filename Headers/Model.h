@@ -21,7 +21,7 @@ namespace rfe {
         void Scale(const glm::vec3& scale);
         void Rotate(const glm::vec3& rotation, float angle);
         void ResetModelMatrix();
-        void DrawModel(Shader& shader);
+        void DrawModel();
 
         void SetupShaderModelMatrix();
     };

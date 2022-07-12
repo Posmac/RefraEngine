@@ -9,6 +9,7 @@ rfe::Texture::Texture(const std::string path,
                       bool flip)
 {
     textureTypeID = textureType;
+    textureID = 0;
     CreateTexture(path.data(), textureType, wrapping, filtering, inColorType, outColorType, flip);
 }
 

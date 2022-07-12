@@ -10,6 +10,9 @@
     //logger
 //DONE
     //Camera class
+    //Texture class
+    //Shader class
+    //Window class
 
 #include "Render.h"
 #include "Window.h"
@@ -24,8 +27,8 @@
 
 int main() {
 
-    double deltaTime = 0;
-    double lastTime = glfwGetTime();
+    float deltaTime = 0;
+    float lastTime = glfwGetTime();
 
     rfe::Render render;
     if (!render.InitGLWF()) return -1;
@@ -53,8 +56,6 @@ int main() {
     loader.LoadMesh("../Assets/Models/simpleBox.obj", box);
     box.CreateMeshVAO();
     rfe::Model cubeModel(box, boxShader);
-
-    //texture class
 
     rfe::Camera camera(glm::vec3(0.0f, 0.0f,  3.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f,  0.0f), 3.0f);
     camera.SetCursorFPS(window);
@@ -86,8 +87,16 @@ int main() {
 
         boxShader.SetMatrix4fUniform("view", view);
         boxShader.SetMatrix4fUniform("projection", projection);
+
+        cubeModel.Translate(glm::vec3(1.0, 1.0, 5.0));
+        cubeModel.Rotate(glm::vec3(0.5), 45);
+        cubeModel.Scale(glm::vec3(1.5));
         cubeModel.SetupShaderModelMatrix();
-        cubeModel.DrawModel(boxShader);
+        cubeModel.DrawModel();
+
+        cubeModel.ResetModelMatrix();
+        cubeModel.SetupShaderModelMatrix();
+        cubeModel.DrawModel();
 
         window.SwapBuffers();
 
