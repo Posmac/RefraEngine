@@ -1,6 +1,7 @@
 #version 330 core
 layout (location = 0) in vec3 localPos;
-layout (location = 1) in vec2 localTexCoords;
+layout (location = 1) in vec3 localNorm;
+layout (location = 2) in vec2 localTexCoords;
 
 out vec2 TexCoords;
 
