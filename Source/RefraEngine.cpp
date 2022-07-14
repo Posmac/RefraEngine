@@ -1,19 +1,3 @@
-//TODO
-    //mesh class loader (obj files)
-    //model class
-    //material class
-    //scene class
-    //resource manager class
-    //application class
-    //error handling class
-    //event system
-    //logger
-//DONE
-    //Camera class
-    //Texture class
-    //Shader class
-    //Window class
-
 #include "Render.h"
 #include "Window.h"
 #include "Shader.h"
