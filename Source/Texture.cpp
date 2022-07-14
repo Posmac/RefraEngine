@@ -1,11 +1,11 @@
 #include "Texture.h"
 
-rfe::Texture::Texture(const std::string path,
-                      unsigned int textureType,
-                      unsigned int wrapping,
-                      unsigned int filtering,
-                      unsigned int inColorType,
-                      unsigned int outColorType,
+rfe::Texture::Texture(const std::string& path,
+                      int textureType,
+                      int wrapping,
+                      int filtering,
+                      int inColorType,
+                      int outColorType,
                       bool flip)
 {
     textureTypeID = textureType;
@@ -14,11 +14,11 @@ rfe::Texture::Texture(const std::string path,
 }
 
 void rfe::Texture::CreateTexture(const char* path,
-                                 unsigned int textureType,
-                                 unsigned int wrapping,
-                                 unsigned int filtering,
-                                 unsigned int inColorType,
-                                 unsigned int outColorType,
+                                 int textureType,
+                                 int wrapping,
+                                 int filtering,
+                                 int inColorType,
+                                 int outColorType,
                                  bool flip)
 {
     glGenTextures(1, &textureID);
@@ -49,12 +49,12 @@ void rfe::Texture::CreateTexture(const char* path,
     glBindTexture(textureType, 0);
 }
 
-void rfe::Texture::Bind()
+void rfe::Texture::Bind() const
 {
     glBindTexture(textureTypeID, textureID);
 }
 
-void rfe::Texture::Unbind()
+void rfe::Texture::Unbind() const
 {
     glBindTexture(textureTypeID, 0);
 }
